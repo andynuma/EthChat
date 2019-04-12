@@ -5,17 +5,26 @@ import { Header, Grid ,Dropdown,Image, Icon } from "semantic-ui-react";
 
 class UserPanel extends React.Component {
 
+  state={
+    name:"",
+    url : ""
+  }
+
   componentDidMount(){
-    // const { user } = this.state
-    console.log("UserPanel",this.props.currentUser)
-    console.log("User panel displayname ", this.props.currentUser.displayName)
-    console.log("User panel photoURL", this.props.currentUser.photoURL)
+    const userRef = firebase.database().ref(`users/${this.props.currentUser.uid}/`)
+    userRef.on("value",(data)=>{
+      const res = data.val()
+      if(res !== null && res.name !== null && res.avatar !== null){
+        this.setState({name: res.name, url: res.avatar})
+      }
+      console.log(this.state.name, this.state.url)
+    })
   }
 
   dropdownOptions = () => [
     {
       key:"user",
-      text: <span>Signed in as <strong>{this.props.currentUser.displayName}</strong></span>,
+      text: <span>Signed in as <strong>{this.state.name}</strong></span>,
       disabled: true
     },
     {
@@ -32,8 +41,6 @@ class UserPanel extends React.Component {
   }
 
   render() {
-    console.log(this.props.currentUser)
-    console.log(this.props.currentUser.displayName)
 
     return(
       <Grid style={{ backgrond:"#4c3c4c" }}>
@@ -50,8 +57,8 @@ class UserPanel extends React.Component {
           <Header style={{ padding:"0.25em" }} as="h4" inverted>
             <Dropdown trigger={
               <span>
-                <Image src={this.props.currentUser.photoURL} spaced="right" avatar/>
-              {this.props.currentUser.displayName}
+                <Image src={this.state.url} spaced="right" avatar/>
+              {this.state.name}
               </span>
             } options={this.dropdownOptions()}/>
           </Header>
