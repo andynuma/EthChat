@@ -1,17 +1,21 @@
 import React from "react"
 import firebase from "../../firebase"
 
-import { Header, Grid ,Dropdown,Image } from "semantic-ui-react";
+import { Header, Grid ,Dropdown,Image, Icon } from "semantic-ui-react";
 
 class UserPanel extends React.Component {
-  state = {
-    user: this.props.currentUser
+
+  componentDidMount(){
+    // const { user } = this.state
+    console.log("UserPanel",this.props.currentUser)
+    console.log("User panel displayname ", this.props.currentUser.displayName)
+    console.log("User panel photoURL", this.props.currentUser.photoURL)
   }
 
   dropdownOptions = () => [
     {
       key:"user",
-      text: <span>Signed in as <strong>{this.state.user && this.state.user.displayName}</strong></span>,
+      text: <span>Signed in as <strong>{this.props.currentUser.displayName}</strong></span>,
       disabled: true
     },
     {
@@ -28,9 +32,8 @@ class UserPanel extends React.Component {
   }
 
   render() {
-    // console.log(this.props.currentUser)
-    const { user } = this.state
-    console.log("user panel :",user)
+    console.log(this.props.currentUser)
+    console.log(this.props.currentUser.displayName)
 
     return(
       <Grid style={{ backgrond:"#4c3c4c" }}>
@@ -38,7 +41,7 @@ class UserPanel extends React.Component {
           <Grid.Row style={{ padding: "1.2em", margin:0 }}>
             {/* App Header */}
             <Header inverted floated="left" as="h2">
-              <i class="wechat icon"></i>
+              <Icon name="wechat"/>
               <Header.Content>EthChat</Header.Content>
             </Header>
           </Grid.Row>
@@ -47,8 +50,8 @@ class UserPanel extends React.Component {
           <Header style={{ padding:"0.25em" }} as="h4" inverted>
             <Dropdown trigger={
               <span>
-                <Image src={user && user.photoURL} spaced="right" avatar/>
-              {user && user.displayName}
+                <Image src={this.props.currentUser.photoURL} spaced="right" avatar/>
+              {this.props.currentUser.displayName}
               </span>
             } options={this.dropdownOptions()}/>
           </Header>

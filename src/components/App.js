@@ -8,7 +8,6 @@ import SidePanel from "./SidePanel/SidePanel"
 import MetaPanel from "./MetaPanel/MetaPanel"
 
 const App = ({currentUser, currentChannel,currentAccount}) => (
-
   <Grid columns="equal" className="app" style={{background : "#eee"}}>
     <SidePanel
       currentUser={currentUser}

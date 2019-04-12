@@ -30,9 +30,8 @@ class Channels extends React.Component{
       // 配列にfirebaseのdatabaseのデータを追加する
       // snapshot のデータは val() メソッドで取得できる
       loadedChannels.push(snap.val());
-      console.log(snap.val())
       // console.log(snap)
-      console.log(loadedChannels);
+      // console.log(loadedChannels);
       // 取得したsnapShotをstateに追加
       this.setState({ channels: loadedChannels }, () => this.setFirstChannel())
     })
@@ -66,7 +65,7 @@ class Channels extends React.Component{
     .child(key)
     .update(newChannel)
     .then(() => {
-      this.setState({channelName:"", channelDetails:""})
+      this.setState({ channelName:"", channelDetails:"" })
       this.closeModal()
       console.log("channel added")
     })

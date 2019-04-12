@@ -27,16 +27,17 @@ class Root extends React.Component {
     // Login or not Login
     firebase.auth().onAuthStateChanged(user => {
       if (user){
-        this.props.history.push("/")
+        console.log(user)
+        console.log(user.photoURL)
         this.props.setUser(user);
-        // console.log(user)
+        this.props.history.push("/")
+        console.log(user)
       }
       else {
         this.props.history.push("/login")
         this.props.clearUser()
       }
     })
-
     // web3
     this.web3Checker()
   }
@@ -48,24 +49,30 @@ class Root extends React.Component {
   }
 
   render(){
-    return this.props.isLoading ? <Spinner /> : (
+    return (this.props.isLoading || this.props.isAccountLoading) ? <Spinner /> : (
           <Switch>
             <Route exact path="/" component={App}/>
             <Route path="/login" component={Login}/>
-            <Route path="/register" component={Register}/>
+            {/* <Route path="/register" component={Register}/> */}
+            <Route path="/register" render={() => <Register setUser={setUser} />} />
           </Switch>
       )
     }
 }
 
 const mapStateFromProps = state => ({
-  isLoading: state.user.isLoading
+  isLoading: state.user.isLoading,
+  isAccountLoading: state.account.isAccountLoading
 })
 
-const RootWithAuth = withRouter(connect(mapStateFromProps, { setUser, clearUser,setCurrentAccount })(Root))
+const RootWithAuth = withRouter(connect(
+  mapStateFromProps,
+  { setUser, clearUser, setCurrentAccount }
+)(Root))
 
 ReactDOM.render(
 <Provider store={store}>
-<Router><RootWithAuth/></Router>
-</Provider>, document.getElementById('root'));
+  <Router><RootWithAuth/></Router>
+</Provider>
+, document.getElementById('root'));
 registerServiceWorker();

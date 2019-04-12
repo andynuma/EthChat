@@ -4,6 +4,7 @@ import MessageHeader from "./MessageHeader"
 import MessageForm from "./MessageForm"
 import Message from "./Message"
 import firebase from "../../firebase"
+import Spinner from "../../Spinner";
 
 class Messages extends React.Component{
   state = {
@@ -29,7 +30,7 @@ class Messages extends React.Component{
     let accounts = await this.state.account
     let myAccount =  await accounts
     this.setState({ account : myAccount[0]})
-    console.log("Messages account",this.state.account)
+    console.log("Metamask account : ",this.state.account)
   }
 
   addListeners = channelId => {
@@ -90,9 +91,11 @@ class Messages extends React.Component{
     const { messagesRef, channel, user, messages, searchTerm ,searchResults, account } = this.state
     // console.log(searchTerm)
     // console.log(searchResults)
-    console.log("your account", account)
+    // console.log("your account", account)
     return(
-      <React.Fragment>
+      this.props.currentAccount.isAccountLoading
+      ? <Spinner/>
+      : <React.Fragment>
         <MessageHeader
         // currentChannel={channel}
         // channelName={this.displayChannelName(channel)}

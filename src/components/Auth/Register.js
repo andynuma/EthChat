@@ -3,6 +3,8 @@ import {Grid, Form, Segment, Button, Header, Message, Icon} from "semantic-ui-re
 import {Link} from "react-router-dom"
 import firebase from "../../firebase";
 import md5 from "md5"
+// import { setUser } from "../../actions"
+
 
 class Register extends React.Component{
   state = {
@@ -13,6 +15,10 @@ class Register extends React.Component{
     errors:[],
     loading:false,
     usersRef: firebase.database().ref("users")
+  }
+
+  componentWillUnmount(){
+    this.state.usersRef.off()
   }
 
   isFormValid = () =>{
@@ -56,41 +62,61 @@ class Register extends React.Component{
     this.setState({[event.target.name]:event.target.value})
   }
 
-  saveUser = (createdUser) => {
+  saveUser = async (createdUser) => {
     // firebaseのdatabaseにuidという要素を追加して、そこにnameとavatarをセットする
-    return this.state.usersRef.child(createdUser.user.uid).set({
-      name: createdUser.user.displayName,
-      avatar: createdUser.user.photoURL
+    await this.state.usersRef.child(createdUser.uid).set({
+      name: createdUser.displayName,
+      avatar: createdUser.photoURL
     })
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    if(this.isFormValid()){
-      this.setState({errors:[], loading:true})
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then(createdUser => {
-          console.log(createdUser)
-          createdUser.user.updateProfile({
-            displayName: this.state.username,
-            photoURL:`http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
-          })
-          .then(() => {
-            this.saveUser(createdUser).then(() => {
-              console.log("user saved")
-            })
-          })
-          .catch(err => {
-            console.log(err);
-            this.setState({errors: this.state.errors.concat(err), loading:false})
-          })
+  // handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   if(this.isFormValid()){
+  //     this.setState({errors:[], loading:true})
+  //     firebase
+  //       .auth()
+  //       .createUserWithEmailAndPassword(this.state.email, this.state.password)
+  //       .then(createdUser => {
+  //         console.log(createdUser)
+  //         console.log("te")
+  //         createdUser.user.updateProfile({
+  //           displayName: this.state.username,
+  //           photoURL:`http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+  //         })
+  //         .then(() => {
+  //           this.saveUser(createdUser).then(() => {
+  //             console.log("user saved")
+  //           })
+  //         })
+  //         .catch(err => {
+  //           console.log(err);
+  //           this.setState({errors: this.state.errors.concat(err), loading:false})
+  //         })
+  //       })
+  //       .catch(err => {
+  //         console.log(err)
+  //         this.setState({errors:this.state.errors.concat(err),loading:false})
+  //       })
+  //   }
+  // }
+
+  handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      if (this.isFormValid()) {
+        this.setState({ errors: [], loading: true })
+        const { user } = await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+        await user.updateProfile({
+          displayName: this.state.username,
+          photoURL: `http://gravatar.com/avatar/${md5(this.state.email)}?d=identicon`
         })
-        .catch(err => {
-          console.log(err)
-          this.setState({errors:this.state.errors.concat(err),loading:false})
-        })
+        console.log(user)
+        await this.saveUser(user)
+        this.props.setUser(user)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 

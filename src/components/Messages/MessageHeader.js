@@ -1,5 +1,5 @@
 import React from "react"
-import { Header, Segment, Input, Icon} from "semantic-ui-react"
+import { Header, Segment, Input} from "semantic-ui-react"
 
 class MessageHeader extends React.Component{
   state = {
@@ -15,7 +15,7 @@ class MessageHeader extends React.Component{
         <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0}}>
           <span>
               # {channel}
-            <Icon name={"start outline"} color="black"/>
+            {/* <Icon  color="black"/> */}
           </span>
           <Header.Subheader>
             {/* 2 Users */}

@@ -15,7 +15,7 @@ const user_reducer = (state = initialUserState,action) =>  {
       }
     case actionTypes.CLEAR_USER:
       return{
-        ...state,
+        currentUser: null,
         isLoading: false
       }
     default:
@@ -41,14 +41,16 @@ const channel_reducer = (state = initialChannleState,action) => {
 }
 
 const initialAccount = {
-  currentAccount: null
+  currentAccount: null,
+  isAccountLoading: true
 }
 
 const account_reducer = (state = initialAccount, action) => {
   switch(action.type){
     case actionTypes.SET_WEB3_ACCOUNT:
       return{
-        currentAccount: action.payload.currentAccount
+        currentAccount: action.payload.currentAccount,
+        isAccountLoading: false
       }
     default :
       return state
